@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: "Inter", system-ui, sans-serif;
+    color: #e9efe9;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #16402f 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 100%, #0e2a1f 0%, transparent 55%),
+      #0a1b14;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Felt micro-texture so the dark green reads as table felt, not flat black. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px
+    );
+    background-size: 4px 4px;
+  }
+}
+
+@layer components {
+  .panel {
+    background: linear-gradient(180deg, rgba(20, 50, 39, 0.9), rgba(13, 36, 27, 0.9));
+    border: 1px solid rgba(120, 200, 160, 0.12);
+    border-radius: 18px;
+    backdrop-filter: blur(6px);
+  }
+
+  .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 11px;
+    color: rgba(232, 198, 106, 0.85);
+  }
+
+  .display {
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
