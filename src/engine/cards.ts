@@ -62,6 +62,21 @@ export function deckWithout(used: Iterable<Card>): Card[] {
   return fullDeck().filter((c) => !dead.has(c));
 }
 
+/**
+ * Draw `n` distinct random cards from the deck, excluding any already in use.
+ * Used to deal a random practice spot; the future quiz engine will reuse it.
+ */
+export function sampleDeck(n: number, exclude: Iterable<Card> = []): Card[] {
+  const available = deckWithout(exclude);
+  // Partial Fisher–Yates: shuffle only the first `n` positions we need.
+  const count = Math.min(n, available.length);
+  for (let i = 0; i < count; i++) {
+    const j = i + Math.floor(Math.random() * (available.length - i));
+    [available[i], available[j]] = [available[j], available[i]];
+  }
+  return available.slice(0, count);
+}
+
 /** Human-readable label, e.g. "A♥". */
 export function prettyCard(card: Card): string {
   return `${rankOf(card)}${SUIT_SYMBOL[suitOf(card)]}`;

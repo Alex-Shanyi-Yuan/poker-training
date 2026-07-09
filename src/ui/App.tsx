@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Card, RANKS, SUITS } from "../engine/cards";
+import { Card, RANKS, SUITS, sampleDeck } from "../engine/cards";
 import { PlayingCard, EmptySlot } from "./PlayingCard";
 import { ResultsPanel } from "./ResultsPanel";
 import { useEquity } from "./useEquity";
@@ -52,6 +52,14 @@ export function App() {
     setBoard([]);
     setActive("hero");
   }
+  function dealRandom() {
+    // Deal a random practice spot: two hole cards + a flop. The equity readout
+    // and glowing outs populate immediately via the useEquity hook.
+    const cards = sampleDeck(5);
+    setHero(cards.slice(0, 2));
+    setBoard(cards.slice(2, 5));
+    setActive("board"); // next natural click adds the turn
+  }
 
   return (
     <div className="min-h-full mx-auto max-w-6xl px-5 py-8">
@@ -68,12 +76,20 @@ export function App() {
             number.
           </p>
         </div>
-        <button
-          onClick={clearAll}
-          className="rounded-full border border-emerald-300/20 px-4 py-2 text-sm text-emerald-100/80 hover:border-gold/60 hover:text-gold transition-colors"
-        >
-          Clear table
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={dealRandom}
+            className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-felt-900 hover:brightness-110 transition"
+          >
+            Deal a hand
+          </button>
+          <button
+            onClick={clearAll}
+            className="rounded-full border border-emerald-300/20 px-4 py-2 text-sm text-emerald-100/80 hover:border-gold/60 hover:text-gold transition-colors"
+          >
+            Clear table
+          </button>
+        </div>
       </header>
 
       <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">

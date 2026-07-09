@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { computeEquity } from "./equity";
 import { evaluate, compareHands } from "./evaluator";
 import { explain } from "./explain";
+import { sampleDeck, fullDeck } from "./cards";
 
 // Equity is approximate under Monte Carlo; allow a tolerance band.
 function near(actual: number, expected: number, tol = 0.025) {
@@ -92,6 +93,27 @@ describe("computeEquity — known benchmarks", () => {
     });
     expect(heads.win).toBeGreaterThan(eight.win);
     near(heads.win + heads.tie, 0.85, 0.03);
+  });
+});
+
+describe("sampleDeck — random dealing", () => {
+  const legal = new Set(fullDeck());
+
+  it("returns the requested count of distinct, legal cards", () => {
+    for (let i = 0; i < 50; i++) {
+      const cards = sampleDeck(5);
+      expect(cards).toHaveLength(5);
+      expect(new Set(cards).size).toBe(5); // all distinct
+      cards.forEach((c) => expect(legal.has(c)).toBe(true));
+    }
+  });
+
+  it("never deals an excluded card", () => {
+    const exclude = ["Ah", "Kh", "Qh"];
+    for (let i = 0; i < 50; i++) {
+      const cards = sampleDeck(5, exclude);
+      cards.forEach((c) => expect(exclude).not.toContain(c));
+    }
   });
 });
 
