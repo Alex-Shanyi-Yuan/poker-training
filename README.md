@@ -4,6 +4,8 @@ A browser-based No-Limit Texas Hold'em training tool. Pick your hole cards and
 the board, and it shows your live chance to win, the hand you currently hold,
 and the **outs** that improve it — so you learn the *why*, not just the number.
 
+> **AI agents:** start with [CLAUDE.md](CLAUDE.md) for project context.
+
 This is **Sub-Project 1** of a four-part roadmap toward poker mastery:
 
 1. **Equity Calculator + Explanations** ← you are here
