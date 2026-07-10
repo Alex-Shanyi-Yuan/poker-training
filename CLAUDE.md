@@ -75,7 +75,8 @@ Facts a fresh session needs but can't cheaply rediscover:
 
 ## Current status & next step
 
-**You are here:** Sub-Projects 1 and 2 are built and tested (38 passing tests).
+**You are here:** Sub-Projects 1 and 2 are built, with all engine tests
+passing (run `npm test` for the current count).
 Quiz mode deals pot-odds spots, grades an equity estimate + a fold/check/call
 decision, and teaches the outs → rule-of-2/4 → breakeven estimation path.
 **Next task:** Sub-Project 3 — **Pre-flop Range Trainer**. See its scope in
