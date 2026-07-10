@@ -14,12 +14,16 @@ src/
     equity.ts        Win/tie/loss via exact enumeration or Monte Carlo
     explain.ts       Teaching layer: current hand, outs, rule-of-2/4 odds
     equity.worker.ts Runs equity.ts off the main thread
-    *.test.ts        Vitest tests (equity benchmarks, outs counting)
+    quiz.ts          Quiz mode: scenario generator, pot-odds math, graders, stats
+    quiz.worker.ts   Deals graded scenarios off the main thread
+    *.test.ts        Vitest tests (equity benchmarks, outs counting, quiz math)
   ui/                React components (may import from engine/, never vice versa)
-    App.tsx          Orchestrates state: hero cards, board, opponents, deck
+    App.tsx          Lab/Quiz mode toggle + lab state: hero, board, opponents
     PlayingCard.tsx  A single rendered card + empty-slot placeholder
     ResultsPanel.tsx The equity readout: big %, segmented bar, outs, coaching
     useEquity.ts     Hook: runs explain() inline, posts equity to the worker
+    QuizMode.tsx     Quiz UI: scenario, estimate + action steps, verdict reveal
+    useQuiz.ts       Hook: quiz state machine, worker wiring, stats persistence
   main.tsx           React entry point
   index.css          Tailwind layers + base/felt styling
 ```
@@ -37,6 +41,20 @@ lets every future trainer (pot odds, ranges, quizzes) reuse it.
    - Posts the heavy equity request to **`equity.worker.ts`** (debounced). The
      worker replies with win/tie/loss; stale replies are ignored via a request id.
 3. `ResultsPanel.tsx` renders the result + explanation.
+
+### Quiz mode (`QuizMode.tsx` + `useQuiz.ts` + `quiz.worker.ts`)
+
+1. `useQuiz` asks `quiz.worker.ts` for a scenario; the worker loops
+   `generateCandidate → computeEquity → reject if within 4pts of breakeven`
+   until it has a clean spot, then returns it fully graded (equity, breakeven,
+   correct action). The UI shows "Dealing…" meanwhile.
+2. The user answers two steps — an equity-estimate band, then fold/check/call.
+   Nothing is graded visibly until both are in (early feedback would leak the
+   equity before the action decision).
+3. The reveal grades both via `quiz.ts` (`gradeEstimate`, `correctAction`),
+   shows the worked outs-math and pot-odds walkthrough, and reuses
+   `ResultsPanel` for the full readout. Stats persist to `localStorage`
+   (`equity-lab.quiz-stats.v1`).
 
 ## Equity strategy (`equity.ts`)
 

@@ -14,19 +14,21 @@ and the **outs** that improve it (glowing on the deck), with rule-of-2/4 odds.
 - **Done when:** engine tests pass against known benchmarks, and the app shows
   live equity + correct outs as cards change. _(Met.)_
 
-## 2. Pot Odds & EV Trainer ⬜  ← next
+## 2. Pot Odds & EV Trainer ✅
 
-Drill the core profitability decision: "Pot is \$100, opponent bets \$50 — call
-or fold?" Show the pot odds, compare to the hand's equity (reuse
-`src/engine/equity.ts`), and explain whether the call is +EV.
+Built quiz-first: a **Quiz mode** (header toggle) deals a random spot — hand,
+board, pot, facing bet — with the equity hidden. Two graded steps per hand:
+(1) estimate your equity from bands, (2) fold/check/call. The reveal shows the
+worked path to the answer: outs count → rule of 2/4 → pot-odds breakeven
+`bet/(pot + bet×(2+callers))` → verdict. Session stats + streak persist in
+`localStorage`. Scenarios within 4pts of breakeven are re-dealt so every
+question has a defensible answer.
 
-- **Scope:** pot/bet inputs → required equity % → compare to actual equity →
-  call/fold verdict with the math shown. A drill mode that deals random spots
-  and scores the user's choice.
 - **Done when:** the trainer states the correct call/fold verdict with EV
-  reasoning for a set of known spots, verified by tests.
+  reasoning for a set of known spots, verified by tests. _(Met — see
+  `src/engine/quiz.test.ts`.)_
 
-## 3. Pre-flop Range Trainer ⬜
+## 3. Pre-flop Range Trainer ⬜  ← next
 
 Drill which hands to open/raise/fold from each position — the biggest beginner
 leak. Show a 13×13 starting-hand grid; quiz the user; score against a solid
