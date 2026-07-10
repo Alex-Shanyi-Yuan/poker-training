@@ -14,7 +14,7 @@ import {
   suitOf,
   RANK_VALUE,
 } from "./cards";
-import { compareHands, evaluate } from "./evaluator";
+import { evaluate } from "./evaluator";
 
 export interface OutCard {
   card: Card;
@@ -89,7 +89,11 @@ export function explain(hero: [Card, Card], board: Card[]): Explanation {
   const cardsToCome = 5 - board.length;
 
   // Find outs. A genuine out must do two things:
-  //   1. strictly improve the hero's hand, and
+  //   1. strictly improve the hero's hand *category* (pair → two pair, trips,
+  //      straight, etc.) — a kicker-only bump doesn't count. Without this,
+  //      a hand with a very low kicker (e.g. a 2) sees almost every remaining
+  //      card as a fake "out", since evaluate() picks the best 5 of 6/7 cards
+  //      and can only ever tie-or-beat a weak kicker.
   //   2. improve it *via the hole cards* — not just improve the community
   //      board (which would help every player equally).
   // We detect (2) by comparing the hero's hand category against the category of
@@ -102,7 +106,7 @@ export function explain(hero: [Card, Card], board: Card[]): Explanation {
   if (cardsToCome > 0) {
     for (const card of remaining) {
       const after = evaluate([...hero, ...board, card]);
-      if (compareHands(after, [current]) !== "win") continue; // didn't improve
+      if (after.categoryRank <= current.categoryRank) continue; // didn't improve
       const boardAfter = evaluate([...board, card]);
       if (after.categoryRank > boardAfter.categoryRank) {
         outs.push({ card, pretty: prettyCard(card), makes: after.name });

@@ -146,6 +146,20 @@ describe("explain — teaching layer", () => {
     expect(ranks.has("8")).toBe(true);
   });
 
+  it("does not count a kicker-only bump as an out (weak-kicker top pair)", () => {
+    // 2c Jh on 7d Jc 5d: hero already has Pair of Jacks with the worst
+    // possible kicker (a 2). Almost any card technically raises the kicker,
+    // but that's not a real out — the hand category (Pair) doesn't change
+    // unless the board pairs again (two pair) or trips up.
+    const e = explain(["2c", "Jh"], ["7d", "Jc", "5d"]);
+    expect(e.currentHandName).toBe("Pair");
+    // Real outs make two pair or trips: pairing the 7, 5, or hero's own 2
+    // (three each), or trips via the remaining two jacks. A weak kicker (the
+    // 2) must NOT make every other card in the deck a fake "out".
+    expect(e.outsCount).toBe(11);
+    e.outs.forEach((o) => expect(o.card[0]).toMatch(/[7J52]/));
+  });
+
   it("reports no outs once the hand is final on the river", () => {
     const e = explain(["Ah", "Kh"], ["Qh", "7h", "2h", "3c", "9d"]);
     expect(e.cardsToCome).toBe(0);

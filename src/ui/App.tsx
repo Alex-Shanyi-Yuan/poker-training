@@ -2,14 +2,17 @@ import { useMemo, useState } from "react";
 import { Card, RANKS, SUITS, sampleDeck } from "../engine/cards";
 import { PlayingCard, EmptySlot } from "./PlayingCard";
 import { ResultsPanel } from "./ResultsPanel";
+import { QuizMode } from "./QuizMode";
 import { useEquity } from "./useEquity";
 
 type Zone = "hero" | "board";
+type Mode = "lab" | "quiz";
 
 const HERO_LABELS = ["Card 1", "Card 2"];
 const BOARD_LABELS = ["Flop", "Flop", "Flop", "Turn", "River"];
 
 export function App() {
+  const [mode, setMode] = useState<Mode>("lab");
   const [hero, setHero] = useState<Card[]>([]);
   const [board, setBoard] = useState<Card[]>([]);
   const [opponents, setOpponents] = useState(1);
@@ -77,21 +80,44 @@ export function App() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={dealRandom}
-            className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-felt-900 hover:brightness-110 transition"
-          >
-            Deal a hand
-          </button>
-          <button
-            onClick={clearAll}
-            className="rounded-full border border-emerald-300/20 px-4 py-2 text-sm text-emerald-100/80 hover:border-gold/60 hover:text-gold transition-colors"
-          >
-            Clear table
-          </button>
+          {/* Lab / Quiz mode toggle */}
+          <div className="flex rounded-full bg-black/25 p-1">
+            {(["lab", "quiz"] as Mode[]).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMode(m)}
+                className={`rounded-full px-4 py-1.5 text-sm font-semibold capitalize transition-all ${
+                  mode === m
+                    ? "bg-gold text-felt-900"
+                    : "text-emerald-100/60 hover:text-emerald-50"
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+          {mode === "lab" && (
+            <>
+              <button
+                onClick={dealRandom}
+                className="rounded-full bg-gold px-4 py-2 text-sm font-semibold text-felt-900 hover:brightness-110 transition"
+              >
+                Deal a hand
+              </button>
+              <button
+                onClick={clearAll}
+                className="rounded-full border border-emerald-300/20 px-4 py-2 text-sm text-emerald-100/80 hover:border-gold/60 hover:text-gold transition-colors"
+              >
+                Clear table
+              </button>
+            </>
+          )}
         </div>
       </header>
 
+      {mode === "quiz" ? (
+        <QuizMode />
+      ) : (
       <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
         {/* LEFT — the table */}
         <section className="panel p-6 flex flex-col gap-7">
@@ -152,9 +178,10 @@ export function App() {
         {/* RIGHT — readout */}
         <ResultsPanel state={equity} />
       </div>
+      )}
 
       <footer className="mt-8 text-center text-xs text-emerald-200/30 font-mono">
-        Equity Lab · step 1 of the road to mastery — next up: pot odds & ranges
+        Equity Lab · pot odds drills live in Quiz — next up: pre-flop ranges
       </footer>
     </div>
   );
